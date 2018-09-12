@@ -94,7 +94,7 @@ def define_mnist_flags():
   flags.adopt_module_key_flags(flags_core)
   flags_core.set_defaults(data_dir='/tmp/mnist_data',
                           model_dir='/tmp/mnist_model',
-                          batch_size=100,
+                          batch_size=50,
                           train_epochs=10)
 
 
