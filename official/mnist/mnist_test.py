@@ -27,12 +27,14 @@ BATCH_SIZE = 100
 
 
 def dummy_input_fn():
+  print("dummy_input_fn() in")
   image = tf.random_uniform([BATCH_SIZE, 784])
   labels = tf.random_uniform([BATCH_SIZE, 1], maxval=9, dtype=tf.int32)
   return image, labels
 
 
 def make_estimator():
+  print("make_estimator() in")
   data_format = 'channels_last'
   if tf.test.is_built_with_cuda():
     data_format = 'channels_first'
@@ -46,6 +48,7 @@ class Tests(tf.test.TestCase):
   """Run tests for MNIST model."""
 
   def test_mnist(self):
+    print("test_mnist() in")
     classifier = make_estimator()
     classifier.train(input_fn=dummy_input_fn, steps=2)
     eval_results = classifier.evaluate(input_fn=dummy_input_fn, steps=1)
@@ -63,8 +66,10 @@ class Tests(tf.test.TestCase):
       predictions = next(predictions_generator)
       self.assertEqual(predictions['probabilities'].shape, (10,))
       self.assertEqual(predictions['classes'].shape, ())
+    print("mnist_model_fn_helper() out")
 
   def mnist_model_fn_helper(self, mode, multi_gpu=False):
+    print("mnist_model_fn_helper() in")
     features, labels = dummy_input_fn()
     image_count = features.shape[0]
     spec = mnist.model_fn(features, labels, mode, {
@@ -102,12 +107,13 @@ class Tests(tf.test.TestCase):
 
   def test_mnist_model_fn_predict_mode(self):
     self.mnist_model_fn_helper(tf.estimator.ModeKeys.PREDICT)
-
+  print("test_mnist() out")
 
 class Benchmarks(tf.test.Benchmark):
   """Simple speed benchmarking for MNIST."""
 
   def benchmark_train_step_time(self):
+    print("benchmark_train_step_time() in")
     classifier = make_estimator()
     # Run one step to warmup any use of the GPU.
     classifier.train(input_fn=dummy_input_fn, steps=1)
@@ -128,8 +134,13 @@ class Benchmarks(tf.test.Benchmark):
         extras={
             'examples_per_sec': BATCH_SIZE / wall_time
         })
+    print("benchmark_train_step_time() out")
 
 
 if __name__ == '__main__':
+  print("main() in")
   tf.logging.set_verbosity(tf.logging.ERROR)
   tf.test.main()
+  print("main() out")
+  while True:
+    time.sleep(10)
